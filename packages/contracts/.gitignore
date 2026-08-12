@@ -1,0 +1,7 @@
+# Foundry
+out/
+cache/
+broadcast/
+
+# Dependencies are vendored via `forge install` and not committed here.
+lib/

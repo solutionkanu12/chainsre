@@ -1,0 +1,49 @@
+{
+  "name": "chainsre",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "build": "pnpm --filter=!@chainsre/contracts -r build",
+    "build:contracts": "pnpm --filter @chainsre/contracts build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm --filter @chainsre/shared --filter @chainsre/db --filter @chainsre/api --filter @chainsre/web test",
+    "test:contracts": "pnpm --filter @chainsre/contracts test",
+    "dev:api": "pnpm --filter @chainsre/api dev",
+    "dev:web": "pnpm --filter @chainsre/web dev"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@types/node": "^22.7.5",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react": "^7.37.1",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.11.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.11.0",
+    "vitest": "^3.2.6"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "@parcel/watcher",
+      "sharp"
+    ],
+    "overrides": {
+      "next>postcss": "^8.5.23",
+      "next>sharp": "^0.35.0",
+      "tsup>esbuild": "^0.28.1",
+      "vitest>vite": "^6.4.3"
+    }
+  }
+}

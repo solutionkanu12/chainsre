@@ -1,0 +1,10 @@
+node_modules
+dist
+.next
+out
+cache
+coverage
+pnpm-lock.yaml
+**/*.md
+phase0
+supabase/migrations

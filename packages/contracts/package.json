@@ -1,0 +1,14 @@
+{
+  "name": "@chainsre/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Foundry workspace for ChainSRE contracts. Real contracts land in Phase 2.",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test -vvv",
+    "fmt": "forge fmt",
+    "fmt:check": "forge fmt --check",
+    "typecheck": "echo \"no-op (Solidity workspace)\"",
+    "clean": "forge clean"
+  }
+}
