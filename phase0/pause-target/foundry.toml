@@ -1,0 +1,16 @@
+# Phase 0 THROWAWAY project — verification only, NOT the ChainSRE app.
+# Sole purpose: a minimal pausable target so a KeeperHub guardian workflow can
+# prove it is able to call pause() on Base Sepolia. Self-contained: no external
+# libraries (tests use an inline Vm cheatcode interface, no forge-std).
+[profile.default]
+src = "src"
+test = "test"
+out = "out"
+libs = []
+solc_version = "0.8.24"
+optimizer = true
+optimizer_runs = 200
+
+[fmt]
+line_length = 100
+tab_width = 4

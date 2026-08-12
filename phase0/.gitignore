@@ -1,0 +1,8 @@
+# Never commit real secrets or local env files.
+.env
+.env.local
+*.env
+!.env.example
+
+# Scratch output from the check scripts
+/tmp/
