@@ -105,6 +105,17 @@ export async function getIncidentByIntentId(
   return data as Incident | null;
 }
 
+/** Every incident raised under one demo run, oldest first — read-only, for run-state queries. */
+export async function listIncidentsByRunId(db: DbClient, runId: string): Promise<Incident[]> {
+  const { data, error } = await db
+    .from('incidents')
+    .select('*')
+    .eq('run_id', runId)
+    .order('detected_at', { ascending: true });
+  if (error) throw new RepositoryError('failed to list incidents by run id', error);
+  return (data ?? []) as Incident[];
+}
+
 export interface AcquireContainmentLockResult {
   /** True only for the ONE caller that actually won the lock. */
   acquired: boolean;

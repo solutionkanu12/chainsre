@@ -22,6 +22,8 @@ export class FakeChainClient {
   private latestBlock = 0n;
   private readonly blockTimestamps = new Map<string, bigint>();
   private readonly pausedByVault = new Map<string, boolean>();
+  private readonly committedIntents = new Set<string>();
+  private readonly sharesByVaultHolder = new Map<string, bigint>();
   private pendingFailures = 0;
 
   addLog(log: RawLog): void {
@@ -42,6 +44,18 @@ export class FakeChainClient {
 
   setPaused(vault: Hex, value: boolean): void {
     this.pausedByVault.set(vault.toLowerCase(), value);
+  }
+
+  /** Marks an intentId as committed on the (fake) `IntentRegistry` — read back by `readIsCommitted`. */
+  setCommitted(intentId: Hex, value: boolean): void {
+    const key = intentId.toLowerCase();
+    if (value) this.committedIntents.add(key);
+    else this.committedIntents.delete(key);
+  }
+
+  /** Sets `DemoVault.sharesOf(holder)` for one vault to an absolute value — read back by `readSharesOf`. */
+  setSharesOf(vault: Hex, holder: Hex, value: bigint): void {
+    this.sharesByVaultHolder.set(`${vault.toLowerCase()}:${holder.toLowerCase()}`, value);
   }
 
   /** The next N provider calls (getBlockNumber/getLogs/getBlock) throw, simulating an outage. */
@@ -88,10 +102,25 @@ export class FakeChainClient {
     });
   }
 
-  async readContract(args: { address: Hex; functionName: string }): Promise<unknown> {
+  async readContract(args: {
+    address: Hex;
+    functionName: string;
+    args?: readonly unknown[];
+  }): Promise<unknown> {
     this.maybeFail('readContract');
     if (args.functionName === 'paused') {
       return this.pausedByVault.get(args.address.toLowerCase()) ?? false;
+    }
+    if (args.functionName === 'isCommitted') {
+      const intentId = args.args?.[0] as Hex | undefined;
+      return intentId ? this.committedIntents.has(intentId.toLowerCase()) : false;
+    }
+    if (args.functionName === 'sharesOf') {
+      const holder = args.args?.[0] as Hex | undefined;
+      if (!holder) return 0n;
+      return (
+        this.sharesByVaultHolder.get(`${args.address.toLowerCase()}:${holder.toLowerCase()}`) ?? 0n
+      );
     }
     throw new Error(
       `FakeChainClient.readContract: unsupported functionName "${args.functionName}"`,

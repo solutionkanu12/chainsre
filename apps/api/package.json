@@ -11,8 +11,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watcher": "vitest run --config vitest.watcher.config.ts",
+    "test:demo": "vitest run --config vitest.demo.config.ts",
     "proof:phase3": "tsx scripts/phase3-live-proof.ts",
-    "watcher:run": "tsx scripts/watcher-run.ts"
+    "watcher:run": "tsx scripts/watcher-run.ts",
+    "demo:run": "tsx scripts/demo-run.ts"
   },
   "dependencies": {
     "@chainsre/db": "workspace:*",

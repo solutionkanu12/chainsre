@@ -49,6 +49,17 @@ export async function getIntentByHash(db: DbClient, intentHash: string): Promise
   return data as Intent | null;
 }
 
+/** Every intent declared under one demo run, oldest first — read-only, for run-state queries. */
+export async function listIntentsByRunId(db: DbClient, runId: string): Promise<Intent[]> {
+  const { data, error } = await db
+    .from('intents')
+    .select('*')
+    .eq('run_id', runId)
+    .order('created_at', { ascending: true });
+  if (error) throw new RepositoryError('failed to list intents by run id', error);
+  return (data ?? []) as Intent[];
+}
+
 async function transitionIntent(
   db: DbClient,
   id: string,
