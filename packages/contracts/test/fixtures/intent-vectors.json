@@ -1,0 +1,92 @@
+{
+  "schema": "chainsre/mint-v1",
+  "schemaHash": "0x1e2c42f845260cdf5480f332b96d5a107f9ceba6a9f5e8d39f00950cc4c34e6b",
+  "mintSharesSelector": "0xdd10f8ca",
+  "count": 6,
+  "vectors": [
+    {
+      "name": "demo-normal-mint-950",
+      "note": "The declared action in the ChainSRE demo: mint 950 shares (18 decimals).",
+      "chainId": "84532",
+      "agent": "0x6c0a292c3e7cf192efb4d6c7328fcaff12208bcb",
+      "target": "0x1111111111111111111111111111111111111111",
+      "selector": "0xdd10f8ca",
+      "receiver": "0x2222222222222222222222222222222222222222",
+      "shares": "950000000000000000000",
+      "deadline": "1897430400",
+      "nonce": "1",
+      "paramsHash": "0x366325ec9ce6c0fffab31c8919d1ae459dfee4bd51a0314e8c2c2ca49d4858cc",
+      "intentId": "0xa851c84ae6b38ea9521be1a466852be33ab138ecf5e91aec98721be840dcc166"
+    },
+    {
+      "name": "demo-overmint-80m",
+      "note": "The adversarial action: mint 80,000,000 shares. Technically valid, semantically wrong.",
+      "chainId": "84532",
+      "agent": "0x6c0a292c3e7cf192efb4d6c7328fcaff12208bcb",
+      "target": "0x1111111111111111111111111111111111111111",
+      "selector": "0xdd10f8ca",
+      "receiver": "0x2222222222222222222222222222222222222222",
+      "shares": "80000000000000000000000000",
+      "deadline": "1897430400",
+      "nonce": "2",
+      "paramsHash": "0xac5fd147bba3b5be3d5dc871ee8da22fd4a992561f91ce908636ab229548977b",
+      "intentId": "0x088ff95b364953c4bc415628809a9f058c4e9d9eccac279d442949d0d698397e"
+    },
+    {
+      "name": "control-vault-same-params",
+      "note": "Same params, control vault: only target differs, so the id must differ.",
+      "chainId": "84532",
+      "agent": "0x6c0a292c3e7cf192efb4d6c7328fcaff12208bcb",
+      "target": "0x1111111111111111111111111111111111111112",
+      "selector": "0xdd10f8ca",
+      "receiver": "0x2222222222222222222222222222222222222222",
+      "shares": "950000000000000000000",
+      "deadline": "1897430400",
+      "nonce": "1",
+      "paramsHash": "0x366325ec9ce6c0fffab31c8919d1ae459dfee4bd51a0314e8c2c2ca49d4858cc",
+      "intentId": "0x0e92a5daab93b6f5248c8b8055e1322d29fbe7d1411587994a1c7824d5db6ea3"
+    },
+    {
+      "name": "other-chain-same-params",
+      "note": "Same params on mainnet: chain id is in the hash domain, so the id must differ.",
+      "chainId": "1",
+      "agent": "0x6c0a292c3e7cf192efb4d6c7328fcaff12208bcb",
+      "target": "0x1111111111111111111111111111111111111111",
+      "selector": "0xdd10f8ca",
+      "receiver": "0x2222222222222222222222222222222222222222",
+      "shares": "950000000000000000000",
+      "deadline": "1897430400",
+      "nonce": "1",
+      "paramsHash": "0x366325ec9ce6c0fffab31c8919d1ae459dfee4bd51a0314e8c2c2ca49d4858cc",
+      "intentId": "0x9c2567928b18550e4100b9f4142f0ad2d9ca865230c10f7f787c1050efcdd514"
+    },
+    {
+      "name": "zero-edges",
+      "note": "Zero agent, target, selector, receiver, shares, deadline and nonce.",
+      "chainId": "84532",
+      "agent": "0x0000000000000000000000000000000000000000",
+      "target": "0x0000000000000000000000000000000000000000",
+      "selector": "0x00000000",
+      "receiver": "0x0000000000000000000000000000000000000000",
+      "shares": "0",
+      "deadline": "0",
+      "nonce": "0",
+      "paramsHash": "0xad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5",
+      "intentId": "0xec28c03a2584d65bc3309b89bba381865cefc608612dc487327fa13a3a0dbd09"
+    },
+    {
+      "name": "max-uint-edges",
+      "note": "uint256 max shares with uint64 max deadline and nonce.",
+      "chainId": "84532",
+      "agent": "0xffffffffffffffffffffffffffffffffffffffff",
+      "target": "0xffffffffffffffffffffffffffffffffffffffff",
+      "selector": "0xffffffff",
+      "receiver": "0xffffffffffffffffffffffffffffffffffffffff",
+      "shares": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+      "deadline": "18446744073709551615",
+      "nonce": "18446744073709551615",
+      "paramsHash": "0xcdcdfaf640ccaa746456591f72b9aab9064a3ce6a2a22e2355139c8e948612eb",
+      "intentId": "0x5fdfd921b33d094767bc2994117750ff69e0db84d8f63c76c3ba95a57bba6bf6"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "explorer": "https://sepolia.basescan.org",
+  "deployedAt": "2026-08-13",
+  "deployer": "0x6C0a292C3e7CF192EfB4d6c7328FcAFf12208bcB",
+  "roles": {
+    "admin": "0x6C0a292C3e7CF192EfB4d6c7328FcAFf12208bcB",
+    "minter": "0x6C0a292C3e7CF192EfB4d6c7328FcAFf12208bcB",
+    "guardian": "0x6C0a292C3e7CF192EfB4d6c7328FcAFf12208bcB"
+  },
+  "seedAssetsPerVault": "1000000000000000000000000",
+  "vaultRuntimeCodehash": "0xdd39c02ae5126aedd9cae8c3643cca95d80c786a27f42c08cd6fef65e5053252",
+  "contracts": {
+    "IntentRegistry": {
+      "address": "0x6A78fCF6Cb1BF7b45b98E262Ee65965263BB23F9",
+      "deployTx": "0x301c04d05baffbbb14e0813c18abe54993838aa1acdc6adee7fa27f26bdf6b92",
+      "block": 45412091
+    },
+    "MockAsset": {
+      "address": "0x961fA7f8cDcbA67717cE92c249443F74F3D448C5",
+      "deployTx": "0xf00d1272ce2b284129d03513a6dc15c6f5694948c5f79ba9f710bc87d1ecf72f",
+      "block": 45412093
+    },
+    "ProtectedDemoVault": {
+      "address": "0x429F2b842e5B0BCfd5f8359736aCC444FB35fB4B",
+      "deployTx": "0x454637b5bca1426f9b463c6000752749e4cb3cecd9865b408abd6fb442fa1676",
+      "block": 45412095,
+      "seedTx": "0x3c270db7939f65674ce2ea7b8d50c4fb8fe0ff4e30cd72efbbaae91425c26ae6"
+    },
+    "ControlDemoVault": {
+      "address": "0xF0Dd43FBbEA515f2fa8e2c0C0a2C60f5eFC6f3b5",
+      "deployTx": "0xc435915bc1fec7ace7f3483f6573115460994e625c6efcc4f588f50aecf9242c",
+      "block": 45412096,
+      "seedTx": "0x6f71f8f1df78bf6cc575a04a339f9d8500b3b92f0a34d2e1ecf1d36da62ae023"
+    }
+  },
+  "intentSchema": {
+    "id": "chainsre/mint-v1",
+    "hash": "0x1e2c42f845260cdf5480f332b96d5a107f9ceba6a9f5e8d39f00950cc4c34e6b",
+    "mintSharesSelector": "0xdd10f8ca"
+  }
+}

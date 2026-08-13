@@ -3,3 +3,4 @@ export * from './explorer';
 export * from './logger';
 export * from './env';
 export * from './schemas';
+export * from './intent-hash';

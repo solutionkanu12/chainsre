@@ -3,5 +3,5 @@ out/
 cache/
 broadcast/
 
-# Dependencies are vendored via `forge install` and not committed here.
-lib/
+# `lib/` is intentionally NOT ignored: dependencies (forge-std, OpenZeppelin)
+# are pinned git submodules so a clean checkout builds reproducibly.
