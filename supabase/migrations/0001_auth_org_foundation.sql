@@ -104,8 +104,16 @@ $$;
 
 revoke all on function public.is_org_member(uuid, uuid) from public;
 revoke all on function public.is_org_admin(uuid, uuid) from public;
-grant execute on function public.is_org_member(uuid, uuid) to authenticated;
-grant execute on function public.is_org_admin(uuid, uuid) to authenticated;
+-- Also grant to `anon`, not just `authenticated`: the SELECT policies below
+-- evaluate this function for EVERY role, including an unauthenticated one.
+-- Without this grant, an anon SELECT on `organizations` errors with
+-- "permission denied for function is_org_member" instead of cleanly
+-- filtering to zero rows — a real gap this migration had until a live
+-- integration test (Phase 4, `packages/db/test/integration`) exercised it
+-- for the first time. anon still sees nothing it isn't a member of; this
+-- only fixes how that "nothing" is returned.
+grant execute on function public.is_org_member(uuid, uuid) to anon, authenticated;
+grant execute on function public.is_org_admin(uuid, uuid) to anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Triggers
@@ -232,7 +240,7 @@ create policy members_insert_admin
   on public.organization_members for insert
   with check (
     public.is_org_admin(organization_id, auth.uid())
-    and new.role <> 'owner'
+    and role <> 'owner'
   );
 
 drop policy if exists members_update_admin on public.organization_members;
@@ -241,7 +249,7 @@ create policy members_update_admin
   using (public.is_org_admin(organization_id, auth.uid()))
   with check (
     public.is_org_admin(organization_id, auth.uid())
-    and new.role <> 'owner'
+    and role <> 'owner'
   );
 
 drop policy if exists members_delete_admin on public.organization_members;

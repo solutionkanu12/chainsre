@@ -14,8 +14,14 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@supabase/postgrest-js": "^2.112.3",
     "@types/node": "^22.7.5",
+    "@types/pg": "^8.21.0",
+    "pg": "^8.23.0",
     "typescript": "^5.6.3",
     "vitest": "^3.2.6"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.3"
   }
 }

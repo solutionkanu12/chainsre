@@ -83,6 +83,11 @@ describe('auth/org migration — structure', () => {
   });
 
   it('only owners can grant the owner role (admins cannot escalate)', () => {
-    expect(normalized).toContain("and new.role <> 'owner'");
+    // Bare `role`, not `new.role` — `NEW`/`OLD` pseudo-records don't exist in
+    // an RLS policy's WITH CHECK clause (only inside trigger functions); the
+    // candidate row's columns are referenced unqualified. A live-Postgres
+    // integration test (test/integration/rls-boundaries.test.ts) proves this
+    // policy actually runs; this only proves the SQL is well-formed.
+    expect(normalized).toContain("and role <> 'owner'");
   });
 });
