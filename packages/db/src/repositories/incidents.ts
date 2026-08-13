@@ -1,4 +1,10 @@
-import { InvalidStateTransitionError, RepositoryError, type DbClient } from '../client';
+import {
+  PG_ERROR,
+  RepositoryError,
+  InvalidStateTransitionError,
+  pgErrorCode,
+  type DbClient,
+} from '../client';
 import type { Incident, IncidentSeverity, IncidentState } from '../types';
 
 export interface CreateIncidentInput {
@@ -9,6 +15,7 @@ export interface CreateIncidentInput {
   actual?: Record<string, unknown> | null;
   mismatch_fields: string[];
   action_tx_hash?: string | null;
+  detection_latency_ms?: number | null;
 }
 
 export async function createIncident(db: DbClient, input: CreateIncidentInput): Promise<Incident> {
@@ -22,6 +29,7 @@ export async function createIncident(db: DbClient, input: CreateIncidentInput): 
       actual: input.actual ?? null,
       mismatch_fields: input.mismatch_fields,
       action_tx_hash: input.action_tx_hash ?? null,
+      detection_latency_ms: input.detection_latency_ms ?? null,
     })
     .select('*')
     .maybeSingle();
@@ -29,9 +37,71 @@ export async function createIncident(db: DbClient, input: CreateIncidentInput): 
   return data as Incident;
 }
 
+export interface CreateIncidentIfAbsentResult {
+  incident: Incident;
+  /** True when an incident for this `intent_id` already existed. */
+  alreadyExisted: boolean;
+}
+
+/**
+ * Create an incident, or — if one already exists for this `intent_id` —
+ * return the existing row instead of creating a second one.
+ *
+ * Mirrors `executions.createExecution`'s idempotent-insert pattern exactly:
+ * `incidents (intent_id) WHERE intent_id IS NOT NULL` is a partial UNIQUE
+ * index (`0004_incident_intent_uniqueness.sql`), so two concurrent callers
+ * that both observe the same divergent `SharesMinted` log (a duplicate poll,
+ * or overlapping backfill after a watcher restart) can never both succeed at
+ * inserting — the loser's insert fails with `23505` and this function turns
+ * that into a lookup of the winner's row. One `intentId` can never produce
+ * more than one incident.
+ */
+export async function createIncidentIfAbsent(
+  db: DbClient,
+  input: CreateIncidentInput,
+): Promise<CreateIncidentIfAbsentResult> {
+  const { data, error } = await db
+    .from('incidents')
+    .insert({
+      run_id: input.run_id,
+      intent_id: input.intent_id ?? null,
+      severity: input.severity ?? 'critical',
+      expected: input.expected ?? null,
+      actual: input.actual ?? null,
+      mismatch_fields: input.mismatch_fields,
+      action_tx_hash: input.action_tx_hash ?? null,
+      detection_latency_ms: input.detection_latency_ms ?? null,
+    })
+    .select('*')
+    .maybeSingle();
+
+  if (!error && data) {
+    return { incident: data as Incident, alreadyExisted: false };
+  }
+
+  if (pgErrorCode(error) === PG_ERROR.UNIQUE_VIOLATION && input.intent_id) {
+    const existing = await getIncidentByIntentId(db, input.intent_id);
+    if (existing) return { incident: existing, alreadyExisted: true };
+  }
+  throw new RepositoryError('failed to create incident', error);
+}
+
 export async function getIncident(db: DbClient, id: string): Promise<Incident | null> {
   const { data, error } = await db.from('incidents').select('*').eq('id', id).maybeSingle();
   if (error) throw new RepositoryError('failed to read incident', error);
+  return data as Incident | null;
+}
+
+export async function getIncidentByIntentId(
+  db: DbClient,
+  intentId: string,
+): Promise<Incident | null> {
+  const { data, error } = await db
+    .from('incidents')
+    .select('*')
+    .eq('intent_id', intentId)
+    .maybeSingle();
+  if (error) throw new RepositoryError('failed to read incident by intent id', error);
   return data as Incident | null;
 }
 

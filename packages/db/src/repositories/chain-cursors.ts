@@ -1,6 +1,18 @@
 import { RepositoryError, type DbClient } from '../client';
 import type { ChainCursor } from '../types';
 
+/**
+ * `chain_cursors.last_processed_block` is a SQL `bigint` — safe up to 2^53
+ * for any realistic block number, but PostgREST still serializes it as a
+ * bare JSON number on the wire, not a string. Normalize it back to the
+ * `string` shape {@link ChainCursor} declares (matching every other
+ * on-chain-integer field in this codebase — `nonce`, `gas_used_wei`,
+ * `shares`) so callers never have to special-case this one column.
+ */
+function normalizeCursor(row: Record<string, unknown>): ChainCursor {
+  return { ...row, last_processed_block: String(row.last_processed_block) } as ChainCursor;
+}
+
 export async function getChainCursor(
   db: DbClient,
   chainId: number,
@@ -15,7 +27,7 @@ export async function getChainCursor(
     .eq('event_name', eventName)
     .maybeSingle();
   if (error) throw new RepositoryError('failed to read chain cursor', error);
-  return data as ChainCursor | null;
+  return data ? normalizeCursor(data as Record<string, unknown>) : null;
 }
 
 export interface UpsertChainCursorInput {
@@ -44,5 +56,5 @@ export async function upsertChainCursor(
     .select('*')
     .maybeSingle();
   if (error || !data) throw new RepositoryError('failed to upsert chain cursor', error);
-  return data as ChainCursor;
+  return normalizeCursor(data as Record<string, unknown>);
 }

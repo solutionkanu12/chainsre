@@ -3,12 +3,15 @@
  * is a Solidity-only workspace whose build output (`out/`) is git-ignored, so
  * these are hand-written from the verified source in `packages/contracts/src/`
  * rather than imported from a build artifact. Each fragment covers exactly the
- * functions Phase 3 calls — nothing exposes a generic "any function" surface.
+ * functions/events Phase 3 and Phase 5 use — nothing exposes a generic "any
+ * function" surface.
  *
- * These double as the `abi` field KeeperHub needs for a contract-call request
- * (neither contract is verified on BaseScan yet — see `PHASE-2-RESULTS.md` §8 —
- * so KeeperHub cannot resolve the ABI itself) and as the ABI viem uses for
- * independent on-chain verification.
+ * The function fragments double as the `abi` field KeeperHub needs for a
+ * contract-call request (neither contract is verified on BaseScan yet — see
+ * `PHASE-2-RESULTS.md` §8 — so KeeperHub cannot resolve the ABI itself) and as
+ * the ABI viem uses for independent on-chain verification. The event
+ * fragments are what the Phase 5 watcher decodes confirmed logs with
+ * (`lib/watcher/decode.ts`) — never a generic "any event" decoder.
  */
 
 export const intentRegistryAbi = [
@@ -90,6 +93,19 @@ export const intentRegistryAbi = [
       },
     ],
   },
+  {
+    type: 'event',
+    name: 'IntentCommitted',
+    inputs: [
+      { name: 'intentId', type: 'bytes32', indexed: true },
+      { name: 'agent', type: 'address', indexed: true },
+      { name: 'target', type: 'address', indexed: true },
+      { name: 'selector', type: 'bytes4', indexed: false },
+      { name: 'paramsHash', type: 'bytes32', indexed: false },
+      { name: 'deadline', type: 'uint64', indexed: false },
+      { name: 'nonce', type: 'uint64', indexed: false },
+    ],
+  },
 ] as const;
 
 export const demoVaultAbi = [
@@ -155,5 +171,36 @@ export const demoVaultAbi = [
     stateMutability: 'view',
     inputs: [],
     outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    type: 'event',
+    name: 'SharesMinted',
+    inputs: [
+      { name: 'intentId', type: 'bytes32', indexed: true },
+      { name: 'operator', type: 'address', indexed: true },
+      { name: 'receiver', type: 'address', indexed: true },
+      { name: 'shares', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'SharesRedeemed',
+    inputs: [
+      { name: 'operator', type: 'address', indexed: true },
+      { name: 'receiver', type: 'address', indexed: true },
+      { name: 'shares', type: 'uint256', indexed: false },
+      { name: 'assets', type: 'uint256', indexed: false },
+    ],
+  },
+  // OpenZeppelin's Pausable — DemoVault inherits it and never overrides these.
+  {
+    type: 'event',
+    name: 'Paused',
+    inputs: [{ name: 'account', type: 'address', indexed: false }],
+  },
+  {
+    type: 'event',
+    name: 'Unpaused',
+    inputs: [{ name: 'account', type: 'address', indexed: false }],
   },
 ] as const;
